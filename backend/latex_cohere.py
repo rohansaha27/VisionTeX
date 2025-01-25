@@ -1,16 +1,17 @@
 import requests
 import subprocess
 from image_to_text_google import detect_document_with_api_key
+import os 
+from dotenv import load_dotenv
 
 # Define API keys
-COHERE_API_KEY = "NtHoNqY0jtVOiuUPKuwwH9kqTnMVvX50wJwpxqpN"
 
 # Function to send the extracted text to Cohere API and get LaTeX formatted text
 def generate_latex_from_text(text):
     url = "https://api.cohere.ai/generate"
     
     headers = {
-        "Authorization": f"Bearer {COHERE_API_KEY}",
+        "Authorization": f"Bearer {os.getenv("COHERE_API_KEY")}",
         "Content-Type": "application/json"
     }
 
@@ -33,7 +34,7 @@ def generate_latex_from_text(text):
     else:
         return "Error: Unable to process the text"
     
-    
+
 
 # # Function to convert LaTeX to PDF
 # def latex_to_pdf(latex_code, output_pdf_path):

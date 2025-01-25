@@ -2,11 +2,12 @@ import requests
 import json
 import base64
 from image_to_text import preprocess_image
+from dotenv import load_dotenv
+import os
 
-GOOGLE_API_KEY = "AIzaSyCyagZBg8Us5ohOByHS7LPsSssTgMsZb7A"
 
 def detect_document_with_api_key(image_path):
-    url = f"https://vision.googleapis.com/v1/images:annotate?key={GOOGLE_API_KEY}"
+    url = f"https://vision.googleapis.com/v1/images:annotate?key={os.getenv("GOOGLE_API_KEY")}"
 
   
 
