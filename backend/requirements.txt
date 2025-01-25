@@ -1,0 +1,4 @@
+Flask==2.2.2
+pytesseract==0.3.10
+opencv-python==4.7.0.68
+pillow==9.0.1  # Optional, but helpful for image handling in pytesseract
