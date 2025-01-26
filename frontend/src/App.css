@@ -3,11 +3,13 @@
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Prevent unnecessary scrolling */
 }
 
 .visiontex-container {
   font-family: Arial, sans-serif;
   height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,8 +33,9 @@ body {
   align-items: center;
   width: 100%;
   padding: 20px 20px;
-  margin-top: 20px; /* Added margin to prevent overlap */
+  margin-top: 0; /* Remove additional margin */
   position: relative;
+  flex-shrink: 0; /* Prevent header from resizing */
 }
 
 .toggle-mode-button {
@@ -68,7 +71,7 @@ body {
 }
 
 .upload-box-placeholder {
-  font-size: 1.2rem;
+  font-size: 1.2rem; 
   color: #4a90e2;
   text-align: center;
 }
@@ -101,9 +104,9 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: calc(100vh - 80px); /* Adjusted to account for header height */
-  background-color: inherit; /* Match the first page */
-  color: inherit; /* Match the first page text color */
+  height: calc(100vh - 80px); /* Adjust to account for header height */
+  background-color: inherit; /* Match first page background */
+  color: inherit; /* Match first page text color */
 }
 
 .pdf-viewer,
@@ -111,12 +114,12 @@ body {
   flex: 1;
   padding: 20px;
   border-right: 1px solid #ddd;
-  overflow-y: auto; /* Ensure content scrolls if too large */
+  overflow-y: auto; /* Ensure scrollable content */
 }
 
 .dark-mode .pdf-viewer,
 .dark-mode .latex-viewer {
-  border-right: 1px solid #555; /* Softer border for dark mode */
+  border-right: 1px solid #555; /* Softer borders for dark mode */
 }
 
 .latex-viewer {
@@ -126,7 +129,7 @@ body {
 .pdf-viewer h2,
 .latex-viewer h2 {
   margin-bottom: 20px;
-  color: inherit; /* Match the text color for dark mode */
+  color: inherit; /* Match the theme text color */
 }
 
 .pdf-viewer {
@@ -159,10 +162,10 @@ body {
 .dark-mode .output-container pre {
   background: #3a3a3a; /* Dark mode pre background */
   color: #e0e0e0; /* Dark mode pre text */
-  border: 1px solid #555; /* Softer border for dark mode */
+  border: 1px solid #555; /* Softer borders */
 }
 
 .viewer {
-  height: calc(100% - 40px); /* Adjust height for padding */
+  height: 100%; /* Ensures full height for the viewer */
   overflow: hidden;
 }
