@@ -68,8 +68,9 @@ def generate_latex_from_image(image_path, output_pdf_path):
     latex_to_pdf(latex_code, output_pdf_path)
 
     print(f"PDF generated: {output_pdf_path}")
+    return latex_code
 
-# Example usage
-image_path = "sample2.jpeg"
-output_pdf_path = "output2.pdf"
-generate_latex_from_image(image_path, output_pdf_path)
+# # Example usage
+# image_path = "sample2.jpeg"
+# output_pdf_path = "output2.pdf"
+# generate_latex_from_image(image_path, output_pdf_path)
