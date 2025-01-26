@@ -44,30 +44,49 @@ def latex_to_pdf(latex_code, output_pdf_path):
     \\end{{document}}
     """
 
-    # Save LaTeX code to a .tex file
-    print(complete_latex_code)
-    with open("temp.tex", "w") as f:
-        f.write(complete_latex_code)
-
-    
     try:
-        # Run pdflatex to generate the PDF
-        subprocess.run(["pdflatex", "temp.tex"], check=True)
+        # Save LaTeX code to a .tex file
+        with open("temp.tex", "w") as f:
+            f.write(complete_latex_code)
 
-    except subprocess.CalledProcessError:
-        # If there is an error, generate a simple error message PDF
+        # Run pdflatex to generate the PDF
+        subprocess.run(["pdflatex", "-interaction=nonstopmode", "temp.tex"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Move the generated PDF to the desired location
+        os.replace("temp.pdf", output_pdf_path)
+
+    except subprocess.CalledProcessError as e:
+        # If there is a LaTeX error, handle it gracefully
         error_message = """
         \\documentclass{article}
+        \\usepackage{amsmath}
         \\begin{document}
-        There was an error processing the LaTeX code. Please check the syntax and try again.
+        There was a syntax error in the LaTeX code. Please try submitting your file again.
         \\end{document}
         """
         with open("temp.tex", "w") as f:
             f.write(error_message)
-        subprocess.run(["pdflatex", "temp.tex"], check=True)
+        try:
+            # Generate an error message PDF
+            subprocess.run(["pdflatex", "-interaction=nonstopmode", "temp.tex"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            os.replace("temp.pdf", output_pdf_path)
+        except subprocess.CalledProcessError:
+            # If the error PDF generation fails, log the issue (optional)
+            print("Failed to generate error message PDF.")
+            return False
 
-    # Move the generated PDF to the desired location
-    os.replace("temp.pdf", output_pdf_path)
+    except Exception as general_error:
+        # Log unexpected exceptions
+        print(f"An unexpected error occurred: {general_error}")
+        return False
+
+    finally:
+        # Clean up temporary files
+        for temp_file in ["temp.tex", "temp.log", "temp.aux"]:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+
+    return True
 
 
 
