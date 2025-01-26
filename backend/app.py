@@ -39,12 +39,12 @@ def process_image():
         'pdfBase64': encoded_pdf
     })
 
-@app.route('/get-pdf/<filename>', methods=['GET'])
-def get_pdf(filename):
-    file_path = os.path.join(OUTPUT_FOLDER, filename)
-    if not os.path.exists(file_path):
-        return jsonify({'error': 'File not found'}), 404
-    return send_file(file_path)
+# @app.route('/get-pdf/<filename>', methods=['GET'])
+# def get_pdf(filename):
+#     file_path = os.path.join(OUTPUT_FOLDER, filename)
+#     if not os.path.exists(file_path):
+#         return jsonify({'error': 'File not found'}), 404
+#     return send_file(file_path)
 
 if __name__ == '__main__':
     app.run(debug=True)

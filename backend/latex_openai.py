@@ -49,11 +49,27 @@ def latex_to_pdf(latex_code, output_pdf_path):
     with open("temp.tex", "w") as f:
         f.write(complete_latex_code)
 
-    # Run pdflatex to generate the PDF
-    subprocess.run(["pdflatex", "temp.tex"])
+    
+    try:
+        # Run pdflatex to generate the PDF
+        subprocess.run(["pdflatex", "temp.tex"], check=True)
+
+    except subprocess.CalledProcessError:
+        # If there is an error, generate a simple error message PDF
+        error_message = """
+        \\documentclass{article}
+        \\begin{document}
+        There was an error processing the LaTeX code. Please check the syntax and try again.
+        \\end{document}
+        """
+        with open("temp.tex", "w") as f:
+            f.write(error_message)
+        subprocess.run(["pdflatex", "temp.tex"], check=True)
 
     # Move the generated PDF to the desired location
     os.replace("temp.pdf", output_pdf_path)
+
+
 
 # Main function to process the image
 def generate_latex_from_image(image_path, output_pdf_path):
@@ -71,6 +87,6 @@ def generate_latex_from_image(image_path, output_pdf_path):
     return latex_code
 
 # # Example usage
-# image_path = "sample2.jpeg"
-# output_pdf_path = "output2.pdf"
+# image_path = "sample.jpg"
+# output_pdf_path = "output3.pdf"
 # generate_latex_from_image(image_path, output_pdf_path)

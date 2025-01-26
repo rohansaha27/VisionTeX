@@ -1,46 +1,46 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
   const [pdfData, setPdfData] = useState(null); // PDF data from backend
-  const [latexCode, setLatexCode] = useState(''); // LaTeX code from backend
+  const [latexCode, setLatexCode] = useState(""); // LaTeX code from backend
   const [darkMode, setDarkMode] = useState(false);
   const [showOutputPage, setShowOutputPage] = useState(false);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setUploadedFile(file);
-    setFileName(file ? file.name : '');
+    setFileName(file ? file.name : "");
   };
 
   const handleSubmit = async () => {
     if (!uploadedFile) {
-      alert('Please upload a file first.');
+      alert("Please upload a file first.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', uploadedFile);
+    formData.append("file", uploadedFile);
 
     try {
-      const response = await fetch('http://localhost:5000/process', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/process-image", {
+        method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        setPdfData(data.pdf); // 64-bit encoded PDF data
-        setLatexCode(data.latexCode); // LaTeX code
+        setPdfData(data.pdfBase64); // Base64 encoded PDF data from backend
+        setLatexCode(data.latexCode); // LaTeX code from backend
         setShowOutputPage(true);
       } else {
-        alert('Error processing the file. Please try again.');
+        alert("Error processing the file. Please try again.");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while connecting to the server.');
+      console.error("Error:", error);
+      alert("An error occurred while connecting to the server.");
     }
   };
 
@@ -51,16 +51,18 @@ function App() {
   const handleBack = () => {
     setShowOutputPage(false);
     setUploadedFile(null);
-    setFileName('');
+    setFileName("");
     setPdfData(null);
-    setLatexCode('');
+    setLatexCode("");
   };
 
   return (
-    <div className={`visiontex-container ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div
+      className={`visiontex-container ${darkMode ? "dark-mode" : "light-mode"}`}
+    >
       <header className="header">
         <button onClick={toggleDarkMode} className="toggle-mode-button">
-          {darkMode ? '🌙 Dark Mode' : '☀️ Light Mode'}
+          {darkMode ? "🌙 Dark Mode" : "☀️ Light Mode"}
         </button>
         <h1>VisionTeX</h1>
       </header>
@@ -73,7 +75,7 @@ function App() {
               <iframe
                 src={`data:application/pdf;base64,${pdfData}`}
                 title="PDF Viewer"
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: "100%", height: "100%" }}
               ></iframe>
             ) : (
               <p>No PDF data available.</p>
@@ -81,7 +83,7 @@ function App() {
           </div>
           <div className="latex-viewer">
             <h2>LaTeX Output</h2>
-            <pre>{latexCode || 'No LaTeX code available.'}</pre>
+            <pre>{latexCode || "No LaTeX code available."}</pre>
           </div>
           <button onClick={handleBack} className="back-button">
             Back
@@ -91,14 +93,14 @@ function App() {
         <main className="main-content">
           <label htmlFor="fileInput" className="upload-box">
             <div className="upload-box-placeholder">
-              {fileName || 'Click to upload an image'}
+              {fileName || "Click to upload an image"}
             </div>
             <input
               id="fileInput"
               type="file"
               accept=".jpg, .jpeg, .png"
               onChange={handleFileChange}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
           </label>
           <div className="button-container">
