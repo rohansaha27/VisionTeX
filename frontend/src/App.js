@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Worker, Viewer } from '@react-pdf-viewer/core'; // Import PDF Viewer
-import '@react-pdf-viewer/core/lib/styles/index.css'; // Viewer styles
 import './App.css';
 
 function App() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [fileName, setFileName] = useState('');
-  const [output, setOutput] = useState('');
+  const [pdfData, setPdfData] = useState(null); // PDF data from backend
+  const [latexCode, setLatexCode] = useState(''); // LaTeX code from backend
   const [darkMode, setDarkMode] = useState(false);
   const [showOutputPage, setShowOutputPage] = useState(false);
 
@@ -16,7 +15,7 @@ function App() {
     setFileName(file ? file.name : '');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!uploadedFile) {
       alert('Please upload a file first.');
       return;
@@ -25,24 +24,24 @@ function App() {
     const formData = new FormData();
     formData.append('file', uploadedFile);
 
-    // Simulating asynchronous behavior using promises
-    new Promise((resolve) => {
-      setTimeout(() => {
-        // Mocked backend response
-        const mockResponse = {
-          latexCode: 'Mock LaTeX Code: \\int_{0}^{\\infty} e^{-x^2} dx',
-        };
-        resolve(mockResponse);
-      }, 1000);
-    })
-      .then((response) => {
-        setOutput(response.latexCode);
-        setShowOutputPage(true);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred while connecting to the server.');
+    try {
+      const response = await fetch('http://localhost:5000/process', {
+        method: 'POST',
+        body: formData,
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPdfData(data.pdf); // 64-bit encoded PDF data
+        setLatexCode(data.latexCode); // LaTeX code
+        setShowOutputPage(true);
+      } else {
+        alert('Error processing the file. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while connecting to the server.');
+    }
   };
 
   const toggleDarkMode = () => {
@@ -53,7 +52,8 @@ function App() {
     setShowOutputPage(false);
     setUploadedFile(null);
     setFileName('');
-    setOutput('');
+    setPdfData(null);
+    setLatexCode('');
   };
 
   return (
@@ -69,17 +69,19 @@ function App() {
         <main className="output-page">
           <div className="pdf-viewer">
             <h2>PDF Contents</h2>
-            {uploadedFile ? (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-              <Viewer fileUrl={URL.createObjectURL(uploadedFile)} />
-            </Worker>
+            {pdfData ? (
+              <iframe
+                src={`data:application/pdf;base64,${pdfData}`}
+                title="PDF Viewer"
+                style={{ width: '100%', height: '100%' }}
+              ></iframe>
             ) : (
-              <p>No PDF uploaded</p>
+              <p>No PDF data available.</p>
             )}
           </div>
           <div className="latex-viewer">
             <h2>LaTeX Output</h2>
-            <pre>{output}</pre>
+            <pre>{latexCode || 'No LaTeX code available.'}</pre>
           </div>
           <button onClick={handleBack} className="back-button">
             Back
@@ -94,7 +96,7 @@ function App() {
             <input
               id="fileInput"
               type="file"
-              accept=".pdf"
+              accept=".jpg, .jpeg, .png"
               onChange={handleFileChange}
               style={{ display: 'none' }}
             />
