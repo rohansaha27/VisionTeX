@@ -16,3 +16,5 @@ Upload an image, get structured LaTeX code, and simplify academic writing!  🚀
 ![image](https://github.com/user-attachments/assets/31045e22-3c99-48e3-b4b2-69b086386056)
 
 ![image](https://github.com/user-attachments/assets/68de86aa-9039-4fb4-8395-0aa524157263)
+
+Made for McHacks 2025. 
